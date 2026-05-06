@@ -1,12 +1,18 @@
-import data
-import helpers
 from data import URBAN_ROUTES_URL
 from helpers import is_url_reachable
+from selenium import webdriver
+import time
 
 
 class TestUrbanRoutes:
     @classmethod
     def setup_class(cls):
+        # do not modify - we need additional logging enabled in order to retrieve phone confirmation code
+        from selenium.webdriver import DesiredCapabilities
+        capabilities = DesiredCapabilities.CHROME
+        capabilities["goog:loggingPrefs"] = {'performance': 'ALL'}
+        cls.driver = webdriver.Chrome()
+
         if is_url_reachable(URBAN_ROUTES_URL):
             print('Connected to Urban Routes Server')
         else:
@@ -53,3 +59,7 @@ class TestUrbanRoutes:
         # Add in S8
         print('function created for set route')
         pass
+
+    @classmethod
+    def teardown_class(cls):
+        cls.driver.quit()
