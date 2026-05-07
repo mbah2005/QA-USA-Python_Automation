@@ -1,5 +1,5 @@
 from data import URBAN_ROUTES_URL, ADDRESS_FROM, ADDRESS_TO, PHONE_NUMBER, CARD_NUMBER, CARD_CODE, MESSAGE_FOR_DRIVER
-from helpers import is_url_reachable
+from helpers import is_url_reachable, retrieve_phone_code
 from selenium.webdriver.common.by import By
 
 from selenium import webdriver
@@ -42,34 +42,48 @@ class TestUrbanRoutes:
     def test_fill_phone_number(self):
         main_page = UrbanRoutesPage(self.driver)
         self.driver.get(URBAN_ROUTES_URL)
-        main_page.input_phone_number(ADDRESS_FROM, ADDRESS_TO, PHONE_NUMBER,)
+        main_page.input_phone_number(ADDRESS_FROM, ADDRESS_TO, PHONE_NUMBER, )
 
     def test_fill_card(self):
         main_page = UrbanRoutesPage(self.driver)
         self.driver.get(URBAN_ROUTES_URL)
         main_page.add_credit_card(ADDRESS_FROM, ADDRESS_TO, CARD_NUMBER, CARD_CODE)
+        actual_value = main_page.get_payment_method()
+        expected_value = 'Card'
+        assert expected_value in actual_value, f"Expected {expected_value} but got {actual_value}"
+
 
     def test_comment_for_driver(self):
         main_page = UrbanRoutesPage(self.driver)
         self.driver.get(URBAN_ROUTES_URL)
         main_page.add_comment_for_driver(ADDRESS_FROM, ADDRESS_TO, MESSAGE_FOR_DRIVER)
+        actual_value = main_page.get_comment()
+        expected_value = 'Stop at the juice bar, please'
+        assert expected_value in actual_value, f"Expected {expected_value} but got {actual_value}"
 
     def test_order_blanket_and_handkerchiefs(self):
-        # Add in S8
-        print('function created for set route')
-        pass
+        main_page = UrbanRoutesPage(self.driver)
+        self.driver.get(URBAN_ROUTES_URL)
+        main_page.add_blanket_and_handkerchief(ADDRESS_FROM, ADDRESS_TO)
+        assert main_page.verify_checkbox().get_attribute("checked")
+
 
     def test_order_2_ice_creams(self):
         number_of_ice_creams = 2
+        main_page = UrbanRoutesPage(self.driver)
+        self.driver.get(URBAN_ROUTES_URL)
+        main_page.add_ice_cream(ADDRESS_FROM, ADDRESS_TO)
         for i in range(number_of_ice_creams):
-            # Add in S8
-            print('function created for set route')
-        pass
+            main_page.click_counter_button()
+        actual_value = main_page.get_icecream_value()
+        expected_value = '2'
+        assert expected_value in actual_value, f"Expected {expected_value} but got {actual_value}"
 
     def test_car_search_model_appears(self):
-        # Add in S8
-        print('function created for set route')
-        pass
+        main_page = UrbanRoutesPage(self.driver)
+        self.driver.get(URBAN_ROUTES_URL)
+        main_page.order_taxi(ADDRESS_FROM, ADDRESS_TO, PHONE_NUMBER,)
+        
 
     @classmethod
     def teardown_class(cls):
