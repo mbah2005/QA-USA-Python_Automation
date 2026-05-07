@@ -1,7 +1,11 @@
-from data import URBAN_ROUTES_URL
+from data import URBAN_ROUTES_URL, ADDRESS_FROM, ADDRESS_TO, PHONE_NUMBER, CARD_NUMBER, CARD_CODE, MESSAGE_FOR_DRIVER
 from helpers import is_url_reachable
+from selenium.webdriver.common.by import By
+
 from selenium import webdriver
+
 import time
+from pages import UrbanRoutesPage
 
 
 class TestUrbanRoutes:
@@ -19,29 +23,33 @@ class TestUrbanRoutes:
             print('Cannot connect to Urban Routes. Check the server is on and still running')
 
     def test_set_route(self):
-        # Add in S8
-        print('function created for set route')
-        pass
+        main_page = UrbanRoutesPage(self.driver)
+        self.driver.get(URBAN_ROUTES_URL)
+        main_page.enter_locations(ADDRESS_FROM, ADDRESS_TO)
+        assert self.driver.find_element(By.ID, "from").get_attribute("value") == "East 2nd Street, 601"
+        assert self.driver.find_element(By.ID, "to").get_attribute("value") == "1300 1st St"
+
+
 
     def test_select_plan(self):
-        # Add in S8
-        print('function created for set route')
-        pass
+        main_page = UrbanRoutesPage(self.driver)
+        self.driver.get(URBAN_ROUTES_URL)
+        main_page.select_supportive_plan(ADDRESS_FROM, ADDRESS_TO)
 
     def test_fill_phone_number(self):
-        # Add in S8
-        print('function created for set route')
-        pass
+        main_page = UrbanRoutesPage(self.driver)
+        self.driver.get(URBAN_ROUTES_URL)
+        main_page.input_phone_number(ADDRESS_FROM, ADDRESS_TO, PHONE_NUMBER,)
 
     def test_fill_card(self):
-        # Add in S8
-        print('function created for set route')
-        pass
+        main_page = UrbanRoutesPage(self.driver)
+        self.driver.get(URBAN_ROUTES_URL)
+        main_page.add_credit_card(ADDRESS_FROM, ADDRESS_TO, CARD_NUMBER, CARD_CODE)
 
     def test_comment_for_driver(self):
-        # Add in S8
-        print('function created for set route')
-        pass
+        main_page = UrbanRoutesPage(self.driver)
+        self.driver.get(URBAN_ROUTES_URL)
+        main_page.add_comment_for_driver(ADDRESS_FROM, ADDRESS_TO, MESSAGE_FOR_DRIVER)
 
     def test_order_blanket_and_handkerchiefs(self):
         # Add in S8
