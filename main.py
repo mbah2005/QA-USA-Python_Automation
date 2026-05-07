@@ -35,6 +35,9 @@ class TestUrbanRoutes:
         main_page = UrbanRoutesPage(self.driver)
         self.driver.get(URBAN_ROUTES_URL)
         main_page.select_supportive_plan(ADDRESS_FROM, ADDRESS_TO)
+        actual_value = main_page.get_supportive_text()
+        expected_value = 'Supportive'
+        assert expected_value in actual_value, f"Expected {expected_value} but got {actual_value}"
 
     def test_fill_phone_number(self):
         main_page = UrbanRoutesPage(self.driver)
