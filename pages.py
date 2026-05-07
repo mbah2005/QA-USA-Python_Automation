@@ -1,5 +1,9 @@
 from selenium.webdriver.common.by import By
+from selenium.webdriver.support import expected_conditions
+from selenium.webdriver.support.wait import WebDriverWait
 from helpers import retrieve_phone_code
+import data
+import time
 
 class UrbanRoutesPage:
     # Locators as class attributes
@@ -11,13 +15,13 @@ class UrbanRoutesPage:
     ENTER_PHONE_NUMBER_LOCATOR = (By.XPATH, '//div[@class = "input-container"]')
     NEXT_BUTTON_LOCATOR = (By.XPATH, '//button[@class = "button full"]')
     CONFIRM_BUTTON_LOCATOR = (By.XPATH, '//div[contains(text(),"Confirm")]')
-    PAYMENT_METHOD_LOCATOR = (By.XPATH, '//div[contains(text(),"Payment method")]')
+    PAYMENT_METHOD_LOCATOR = (By.XPATH, '//img[@src = "/static/media/chewron.f3fff088.svg"]')
     ADD_CARD_LOCATOR = (By.XPATH, '//img[@src = "/static/media/plus.d25b8941.svg"]')
     ENTER_CARD_LOCATOR = (By.ID, 'number')
     ENTER_CODE_LOCATOR = (By.ID, 'code')
     LINK_BUTTON_LOCATOR = (By.XPATH, '//div[contains(text(),"Link")]')
     CLOSE_BUTTON_LOCATOR = (By.XPATH, '//button[@class = "close-button section-close"]')
-    COMMENT_LOCATOR = (By.ID, 'comment')
+    COMMENT_LOCATOR = (By.CSS_SELECTOR, "label[for='comment']")
     CHECK_BOX_LOCATOR = (By.CLASS_NAME, 'slider round')
     COUNTER_LOCATOR = (By.CLASS_NAME, 'counter-plus')
     CONFIRM_ORDER_LOCATOR = (By.XPATH, '//button[@class = "smart-button"]')
@@ -101,7 +105,7 @@ class UrbanRoutesPage:
 
     def enter_comment(self, comment):
         # Click Add Button
-        self.driver.find_element(*self.ENTER_CODE_LOCATOR).send_keys(comment)
+        self.driver.find_element(*self.COMMENT_LOCATOR).send_keys(comment)
 
     def click_checkbox_button(self):
         # Click Add Button
@@ -151,7 +155,9 @@ class UrbanRoutesPage:
         self.click_payment_method()
         self.click_add_card()
         self.enter_card_number(card_number)
+        WebDriverWait(self.driver,3).until(expected_conditions.element_to_be_clickable(self.ENTER_CODE_LOCATOR)).click()
         self.enter_card_code(card_code)
+
         self.click_add_card()
         self.click_link_button()
         self.click_close_button()
@@ -163,6 +169,7 @@ class UrbanRoutesPage:
         self.click_call_taxi()
         self.click_supportive_icon()
         self.click_comment_button()
+        time.sleep(2)
         self.enter_comment(comment)
         # Retrieve and assert that the message is stored correctly.
 
