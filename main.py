@@ -26,9 +26,8 @@ class TestUrbanRoutes:
         main_page = UrbanRoutesPage(self.driver)
         self.driver.get(URBAN_ROUTES_URL)
         main_page.enter_locations(ADDRESS_FROM, ADDRESS_TO)
-        assert self.driver.find_element(By.ID, "from").get_attribute("value") == "East 2nd Street, 601"
-        assert self.driver.find_element(By.ID, "to").get_attribute("value") == "1300 1st St"
-
+        assert self.driver.find_element(By.ID, "from").get_attribute("value") == ADDRESS_FROM
+        assert self.driver.find_element(By.ID, "to").get_attribute("value") == ADDRESS_TO
 
 
     def test_select_plan(self):
@@ -42,12 +41,17 @@ class TestUrbanRoutes:
     def test_fill_phone_number(self):
         main_page = UrbanRoutesPage(self.driver)
         self.driver.get(URBAN_ROUTES_URL)
-        main_page.input_phone_number(ADDRESS_FROM, ADDRESS_TO, PHONE_NUMBER, )
+        main_page.select_supportive_plan(ADDRESS_FROM, ADDRESS_TO)
+        main_page.input_phone_number(PHONE_NUMBER)
+        assert self.driver.find_element(By.CLASS_NAME, 'np-text').text == PHONE_NUMBER
+
+
 
     def test_fill_card(self):
         main_page = UrbanRoutesPage(self.driver)
         self.driver.get(URBAN_ROUTES_URL)
-        main_page.add_credit_card(ADDRESS_FROM, ADDRESS_TO, CARD_NUMBER, CARD_CODE)
+        main_page.select_supportive_plan(ADDRESS_FROM, ADDRESS_TO)
+        main_page.add_credit_card(CARD_NUMBER, CARD_CODE)
         actual_value = main_page.get_payment_method()
         expected_value = 'Card'
         assert expected_value in actual_value, f"Expected {expected_value} but got {actual_value}"
@@ -57,15 +61,14 @@ class TestUrbanRoutes:
         main_page = UrbanRoutesPage(self.driver)
         self.driver.get(URBAN_ROUTES_URL)
         main_page.add_comment_for_driver(ADDRESS_FROM, ADDRESS_TO, MESSAGE_FOR_DRIVER)
-        actual_value = main_page.get_comment()
-        expected_value = 'Stop at the juice bar, please'
-        assert expected_value in actual_value, f"Expected {expected_value} but got {actual_value}"
+        assert main_page.get_comment() == MESSAGE_FOR_DRIVER
+
 
     def test_order_blanket_and_handkerchiefs(self):
         main_page = UrbanRoutesPage(self.driver)
         self.driver.get(URBAN_ROUTES_URL)
         main_page.add_blanket_and_handkerchief(ADDRESS_FROM, ADDRESS_TO)
-        assert main_page.verify_checkbox().get_attribute("checked")
+        assert main_page.verify_checkbox()
 
 
     def test_order_2_ice_creams(self):
@@ -82,8 +85,10 @@ class TestUrbanRoutes:
     def test_car_search_model_appears(self):
         main_page = UrbanRoutesPage(self.driver)
         self.driver.get(URBAN_ROUTES_URL)
-        main_page.order_taxi(ADDRESS_FROM, ADDRESS_TO, PHONE_NUMBER,)
-        
+        main_page.order_taxi(ADDRESS_FROM, ADDRESS_TO, PHONE_NUMBER, MESSAGE_FOR_DRIVER)
+        assert main_page.get_car_search() == True
+
+
 
     @classmethod
     def teardown_class(cls):
