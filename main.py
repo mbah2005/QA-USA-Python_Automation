@@ -26,24 +26,22 @@ class TestUrbanRoutes:
         main_page = UrbanRoutesPage(self.driver)
         self.driver.get(URBAN_ROUTES_URL)
         main_page.enter_locations(ADDRESS_FROM, ADDRESS_TO)
-        assert self.driver.find_element(By.ID, "from").get_attribute("value") == ADDRESS_FROM
-        assert self.driver.find_element(By.ID, "to").get_attribute("value") == ADDRESS_TO
+        assert main_page.get_from_address_text() == ADDRESS_FROM
+        assert main_page.get_to_address_text() == ADDRESS_TO
 
 
     def test_select_plan(self):
         main_page = UrbanRoutesPage(self.driver)
         self.driver.get(URBAN_ROUTES_URL)
         main_page.select_supportive_plan(ADDRESS_FROM, ADDRESS_TO)
-        actual_value = main_page.get_supportive_text()
-        expected_value = 'Supportive'
-        assert expected_value in actual_value, f"Expected {expected_value} but got {actual_value}"
+        assert 'Supportive' in main_page.get_supportive_text()
 
     def test_fill_phone_number(self):
         main_page = UrbanRoutesPage(self.driver)
         self.driver.get(URBAN_ROUTES_URL)
         main_page.select_supportive_plan(ADDRESS_FROM, ADDRESS_TO)
         main_page.input_phone_number(PHONE_NUMBER)
-        assert self.driver.find_element(By.CLASS_NAME, 'np-text').text == PHONE_NUMBER
+        assert main_page.get_phone_number() == PHONE_NUMBER
 
 
 
@@ -52,9 +50,7 @@ class TestUrbanRoutes:
         self.driver.get(URBAN_ROUTES_URL)
         main_page.select_supportive_plan(ADDRESS_FROM, ADDRESS_TO)
         main_page.add_credit_card(CARD_NUMBER, CARD_CODE)
-        actual_value = main_page.get_payment_method()
-        expected_value = 'Card'
-        assert expected_value in actual_value, f"Expected {expected_value} but got {actual_value}"
+        assert 'Card' in main_page.get_payment_method()
 
 
     def test_comment_for_driver(self):
@@ -78,15 +74,13 @@ class TestUrbanRoutes:
         main_page.add_ice_cream(ADDRESS_FROM, ADDRESS_TO)
         for i in range(number_of_ice_creams):
             main_page.click_counter_button()
-        actual_value = main_page.get_icecream_value()
-        expected_value = '2'
-        assert expected_value in actual_value, f"Expected {expected_value} but got {actual_value}"
+        assert '2' in main_page.get_icecream_value()
 
     def test_car_search_model_appears(self):
         main_page = UrbanRoutesPage(self.driver)
         self.driver.get(URBAN_ROUTES_URL)
         main_page.order_taxi(ADDRESS_FROM, ADDRESS_TO, PHONE_NUMBER, MESSAGE_FOR_DRIVER)
-        assert main_page.get_car_search() == True
+        assert main_page.get_car_search()
 
 
 
