@@ -39,8 +39,7 @@ class TestUrbanRoutes:
     def test_fill_phone_number(self):
         main_page = UrbanRoutesPage(self.driver)
         self.driver.get(URBAN_ROUTES_URL)
-        main_page.select_supportive_plan(ADDRESS_FROM, ADDRESS_TO)
-        main_page.input_phone_number(PHONE_NUMBER)
+        main_page.input_phone_number(ADDRESS_FROM, ADDRESS_TO, PHONE_NUMBER)
         assert main_page.get_phone_number() == PHONE_NUMBER
 
 
@@ -48,8 +47,7 @@ class TestUrbanRoutes:
     def test_fill_card(self):
         main_page = UrbanRoutesPage(self.driver)
         self.driver.get(URBAN_ROUTES_URL)
-        main_page.select_supportive_plan(ADDRESS_FROM, ADDRESS_TO)
-        main_page.add_credit_card(CARD_NUMBER, CARD_CODE)
+        main_page.add_credit_card(ADDRESS_FROM, ADDRESS_TO, CARD_NUMBER, CARD_CODE)
         assert 'Card' in main_page.get_payment_method()
 
 

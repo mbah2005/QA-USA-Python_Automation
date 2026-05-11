@@ -22,7 +22,6 @@ class UrbanRoutesPage:
     ENTER_CARD_LOCATOR = (By.ID, 'number')
     ENTER_CARD_CODE_LOCATOR = (By.XPATH, '//input[@class="card-input" and @id="code"]')
     LINK_BUTTON_LOCATOR = (By.XPATH, '//button[contains(text(),"Link")]')
-    CLOSE_BUTTON_LOCATOR = (By.XPATH, '//button[@class = "close-button section-close"]')
     COMMENT_LOCATOR = (By.ID, 'comment')
     CHECK_COMMENT_LOCATOR = (By.XPATH, '//input[@class="input" and @id="comment"]')
     CHECK_BOX_LOCATOR = (By.XPATH, '//span[@class = "slider round"]')
@@ -46,8 +45,12 @@ class UrbanRoutesPage:
         # Enter To
         self.driver.find_element(*self.TO_LOCATOR).send_keys(to_text)
 
-    def get_address_text(self):
-        return self.driver.find_element(*self.FROM_LOCATOR).text, self.driver.find_element(*self.TO_LOCATOR).text
+    def get_from_address_text(self):
+        return self.driver.find_element(*self.FROM_LOCATOR).get_attribute("value")
+
+
+    def get_to_address_text(self):
+        return self.driver.find_element(*self.TO_LOCATOR).get_attribute("value")
 
 
     def click_call_taxi(self):
@@ -71,7 +74,7 @@ class UrbanRoutesPage:
         self.driver.find_element(*self.ENTER_PHONE_NUMBER_LOCATOR).send_keys(phone_number)
 
     def get_phone_number(self):
-        return self.driver.find_element(*self.ENTER_PHONE_NUMBER_LOCATOR).text
+        return self.driver.find_element(*self.PHONE_NUMBER_LOCATOR).text
 
 
     def click_next_button(self):
@@ -115,16 +118,8 @@ class UrbanRoutesPage:
         # Click Add Button
         self.driver.find_element(*self.LINK_BUTTON_LOCATOR).click()
 
-    def click_close_button(self):
-        # Click Add Button
-        self.driver.find_element(*self.CLOSE_BUTTON_LOCATOR).click()
-
     def get_payment_method(self):
         return self.driver.find_element(*self.RETRIEVE_CARD_TEXT).text
-
-    def click_comment_button(self):
-        # Click Add Button
-        self.driver.find_element(*self.COMMENT_LOCATOR).click()
 
     def enter_comment(self, comment):
         # Click Add Button
@@ -163,14 +158,14 @@ class UrbanRoutesPage:
         #Retrieve the displayed values and assert that they match the input.
 
     def select_supportive_plan(self, from_text, to_text):
-        self.enter_from_location(from_text)
-        self.enter_to_location(to_text)
+        self.enter_locations(from_text, to_text)
         self.click_call_taxi()
         self.click_supportive_icon()
         #Retrieve the active selection value. Assert that the correct plan is selected dynamically.
 
 
-    def input_phone_number(self, phone_number):
+    def input_phone_number(self, from_text, to_text, phone_number):
+        self.select_supportive_plan(from_text, to_text)
         self.click_phone_number()
         self.enter_phone_number(phone_number)
         self.click_next_button()
@@ -180,12 +175,12 @@ class UrbanRoutesPage:
         self.click_confirm_button()
         #Assert that the user's phone number is reflected properly in the phone field
 
-    def add_credit_card(self,card_number, card_code):
+    def add_credit_card(self,from_text, to_text, card_number, card_code):
+        self.select_supportive_plan(from_text, to_text)
         self.click_payment_method()
         time.sleep(2)
         self.click_add_card()
         self.enter_card_number(card_number)
-        #WebDriverWait(self.driver,3).until(expected_conditions.element_to_be_clickable(self.ENTER_CODE_LOCATOR)).click()
         time.sleep(2)
         self.enter_card_code(card_code)
         self.click_add_card_title()
@@ -193,42 +188,22 @@ class UrbanRoutesPage:
         # Assert text in payment method is “Card”
 
     def add_comment_for_driver(self, from_text, to_text, comment):
-        self.enter_from_location(from_text)
-        self.enter_to_location(to_text)
-        self.click_call_taxi()
-        self.click_supportive_icon()
+        self.select_supportive_plan(from_text, to_text)
         time.sleep(2)
         self.enter_comment(comment)
         # Retrieve and assert that the message is stored correctly.
 
     def add_blanket_and_handkerchief(self, from_text, to_text):
-        self.enter_from_location(from_text)
-        self.enter_to_location(to_text)
-        self.click_call_taxi()
-        self.click_supportive_icon()
+        self.select_supportive_plan(from_text, to_text)
         self.click_checkbox_button()
         # Verify that the selection is confirmed using the correct assertion.
 
     def add_ice_cream(self, from_text, to_text):
-        self.enter_from_location(from_text)
-        self.enter_to_location(to_text)
-        self.click_call_taxi()
-        self.click_supportive_icon()
-
+        self.select_supportive_plan(from_text, to_text)
         # Assert that the displayed count matches 2.
 
     def order_taxi(self, from_text, to_text, phone_number, comment):
-        self.enter_from_location(from_text)
-        self.enter_to_location(to_text)
-        self.click_call_taxi()
-        self.click_supportive_icon()
-        time.sleep(2)
-        self.click_phone_number()
-        self.enter_phone_number(phone_number)
-        self.click_next_button()
-        phone_code = retrieve_phone_code(self.driver)
-        self.enter_code(phone_code)
-        self.click_confirm_button()
+        self.input_phone_number(from_text, to_text, phone_number)
         time.sleep(2)
         self.enter_comment(comment)
         time.sleep(2)
